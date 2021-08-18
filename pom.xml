@@ -104,6 +104,25 @@
             <version>${kotlin.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.batik</groupId>
+            <artifactId>org.apache.batik.all</artifactId>
+            <version>1.14</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.batik</groupId>
+            <artifactId>org.apache.batik.xml-apis-ext</artifactId>
+            <version>1.14</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.batik</groupId>
+            <artifactId>org.apache.batik.xmlgraphics-commons-2.6</artifactId>
+            <version>1.14</version>
+        </dependency>
+
     </dependencies>
 
 </project>
