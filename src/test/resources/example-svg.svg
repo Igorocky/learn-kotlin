@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="500" height="500" viewBox="-5 -5 10 10">
+    <rect x="-1000" y="-1000" width="2000" height="2000" fill="lightgrey"></rect>
+    <rect x="0" y="0" width="2.5" height="2.5" fill="green"></rect>
+</svg>
