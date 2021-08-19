@@ -1,22 +1,5 @@
 package org.igye.svg
 
-import org.w3c.dom.Document
-import org.w3c.dom.Element
-
-open class SvgElem(val name:String) {
-    protected val attrs: MutableMap<String, Any?> = mutableMapOf()
-
-    fun toXmlElem(document: Document): Element {
-        val elem = document.createElement(name)
-        for (attr in attrs) {
-            val xmlAttr = document.createAttribute(attr.key)
-            xmlAttr.setValue(attr.value?.toString())
-            elem.setAttributeNode(xmlAttr)
-        }
-        return elem
-    }
-}
-
 class Point(val x: Double, val y: Double)
 
 class Boundaries(val minX: Double, val maxX: Double, val minY: Double, val maxY: Double) {
