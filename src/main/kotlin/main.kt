@@ -3,17 +3,9 @@ package org.igye.svg
 import org.apache.batik.transcoder.TranscoderInput
 import org.apache.batik.transcoder.TranscoderOutput
 import org.apache.batik.transcoder.image.PNGTranscoder
-import org.w3c.dom.Attr
-import org.w3c.dom.Document
-import org.w3c.dom.Element
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
-import javax.xml.parsers.DocumentBuilderFactory
-import javax.xml.transform.Transformer
-import javax.xml.transform.TransformerFactory
-import javax.xml.transform.dom.DOMSource
-import javax.xml.transform.stream.StreamResult
 
 
 fun main(args: Array<String>) {
@@ -35,64 +27,6 @@ fun main(args: Array<String>) {
     )
 }
 
-fun createSvg(xmlFilePath: String) {
-    val documentFactory = DocumentBuilderFactory.newInstance()
-
-    val documentBuilder = documentFactory.newDocumentBuilder()
-
-    val document: Document = documentBuilder.newDocument()
-
-    // root element
-    val root: Element = document.createElement("company")
-    document.appendChild(root)
-
-    // employee element
-    val employee: Element = document.createElement("employee")
-
-    root.appendChild(employee)
-
-    // set an attribute to staff element
-    val attr: Attr = document.createAttribute("id")
-    attr.setValue("10")
-    employee.setAttributeNode(attr)
-
-    //you can also use staff.setAttribute("id", "1") for this
-
-    // firstname element
-    val firstName: Element = document.createElement("firstname")
-    firstName.appendChild(document.createTextNode("James"))
-    employee.appendChild(firstName)
-
-    // lastname element
-    val lastname: Element = document.createElement("lastname")
-    lastname.appendChild(document.createTextNode("Harley"))
-    employee.appendChild(lastname)
-
-    // email element
-    val email: Element = document.createElement("email")
-    email.appendChild(document.createTextNode("james@example.org"))
-    employee.appendChild(email)
-
-    // department elements
-    val department: Element = document.createElement("department")
-    department.appendChild(document.createTextNode("Human Resources"))
-    employee.appendChild(department)
-
-    // create the xml file
-    //transform the DOM Object to an XML File
-    val transformerFactory = TransformerFactory.newInstance()
-    val transformer: Transformer = transformerFactory.newTransformer()
-    val domSource = DOMSource(document)
-    val streamResult = StreamResult(File(xmlFilePath))
-
-    // If you use
-    // StreamResult result = new StreamResult(System.out);
-    // the output will be pushed to the standard output ...
-    // You can use that for debugging
-    transformer.transform(domSource, streamResult)
-
-    println("Done creating XML File")
-}
 
 fun svgToPng(svgPath: String, pngPath: String, width: Int = 400, height: Int = 400) {
     val svg_URI_input = File(svgPath).toURI().toString()
