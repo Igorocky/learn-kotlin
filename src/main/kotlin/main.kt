@@ -11,20 +11,37 @@ import java.io.OutputStream
 fun main(args: Array<String>) {
 //    createSvg("C:\\igye\\projects\\kotlin\\learn-kotlin\\target\\ttt.xml")
 
-    val svgFilePath = "C:/igye//projects/kotlin/learn-kotlin/target/generated-1.svg"
-    createSvgFile(
-        filePath = svgFilePath,
-        width = 200,
-        height = 200,
-        Boundaries(minX = -10.0, maxX = 10.0, minY = -10.0, maxY = 10.0),
-        Rect(x = -1000.0, y=-1000.0, width = 2000.0, height = 2000.0, fill = "grey"),
-        Rect(x = 0.0, y=0.0, width = 5.0, height = 5.0, fill = "green"),
-    )
+//    println("12".padStart(5, '0'))
+//    if (1 == 1) return
 
-    svgToPng(
-        svgPath = svgFilePath,
-        pngPath = "C:/igye//projects/kotlin/learn-kotlin/target/generated-1.png"
-    )
+    var time = 0.0
+    val dt = 1.0/30
+    var i = 0
+    while (time <= 5.0) {
+        i++
+        val scene = sceneGraphOfFunction(time)
+
+        val iStr = i.toString().padStart(3, '0')
+        val svgFilePath = "C:/igye//projects/kotlin/learn-kotlin/target/movie/generated-$iStr.svg"
+        val width = 100
+        val height = (width * scene.boundaries.height / scene.boundaries.width).toInt()
+        createSvgFile(
+            filePath = svgFilePath,
+            width = width,
+            height = height,
+            boundaries = scene.boundaries,
+            elems = scene.elems
+        )
+
+        svgToPng(
+            svgPath = svgFilePath,
+            pngPath = "C:/igye//projects/kotlin/learn-kotlin/target/movie/generated-$iStr.png",
+            width = width,
+            height = height,
+        )
+
+        time += dt
+    }
 }
 
 

@@ -33,8 +33,6 @@ data class Vector2D(val start: Point, val end: Point) {
     )
 }
 
-
-
 data class Boundaries(val minX: Double, val maxX: Double, val minY: Double, val maxY: Double) {
     init {
         if (!(minX <= maxX && minY <= maxY)) {
@@ -95,3 +93,5 @@ data class Boundaries(val minX: Double, val maxX: Double, val minY: Double, val 
 }
 
 class SvgException(msg: String): RuntimeException(msg)
+
+data class Frame(val boundaries: Boundaries, val elems: List<SvgElem>)
