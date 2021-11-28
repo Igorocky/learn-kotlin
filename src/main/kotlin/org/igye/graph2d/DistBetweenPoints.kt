@@ -9,18 +9,23 @@ import java.math.RoundingMode
 
 data class DistBetweenPoints(
     val base: Vector2D, val color: Color, val baseDist: Double = 0.0, val arrowSize: Double, val lineWidth: Double,
-    val fontSize: Double = arrowSize*1.5, val external: Boolean = false, val textShift: Double = arrowSize*2
+    val fontSize: Double = arrowSize*1.5, val external: Boolean = false, val textShift: Double = arrowSize*2,
+    val renderBoundaries: Boolean = true
 ) {
     fun toSvg(): SvgElems {
         val boundaryBegin: Vector2D = base.normalize().rotate(-90.deg()).times(baseDist)
         val boundaryEnd: Vector2D = base.swapEnds().normalize().rotate(90.deg()).times(baseDist)
-        return SvgElems(
-            boundaries = Boundaries2D.from(boundaryBegin, boundaryEnd),
-            elems = listOf(
-                line(vector = boundaryBegin, color = color, strokeWidth = lineWidth),
-                line(vector = boundaryEnd, color = color, strokeWidth = lineWidth),
+        var result = arrowsAndSize(base = boundaryBegin.end..boundaryEnd.end)
+        if (renderBoundaries) {
+            result = result + SvgElems(
+                boundaries = Boundaries2D.from(boundaryBegin, boundaryEnd),
+                elems = listOf(
+                    line(vector = boundaryBegin, color = color, strokeWidth = lineWidth),
+                    line(vector = boundaryEnd, color = color, strokeWidth = lineWidth),
+                )
             )
-        ).merge(arrowsAndSize(base = boundaryBegin.end..boundaryEnd.end))
+        }
+        return result
     }
 
     fun arrowsAndSize(base: Vector2D): SvgElems {
