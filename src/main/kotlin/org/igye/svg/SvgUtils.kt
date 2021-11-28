@@ -4,6 +4,7 @@ import org.apache.batik.transcoder.TranscoderInput
 import org.apache.batik.transcoder.TranscoderOutput
 import org.apache.batik.transcoder.image.PNGTranscoder
 import org.igye.graph2d.Boundaries2D
+import org.igye.graph2d.Deg
 import org.igye.graph2d.Point
 import org.igye.graph2d.Vector2D
 import java.io.File
@@ -125,6 +126,7 @@ object SvgUtils {
         color: Color? = Color.black,
         style: String? = null,
         transform: String? = null,
+        rotate: Deg? = null
     ):SvgElem {
         val b = begin ?: Point(x!!,y!!)
         val attrs: EnumMap<SvgAttr, Any> = EnumMap(SvgAttr::class.java)
@@ -133,7 +135,7 @@ object SvgUtils {
         attrs[SvgAttr.STROKE] = stroke?.strValue
         attrs[SvgAttr.FILL] = color?.strValue
         attrs[SvgAttr.STYLE] = style
-        attrs[SvgAttr.TRANSFORM] = transform
+        attrs[SvgAttr.TRANSFORM] = transform ?: if (rotate != null) "rotate(${-rotate}, ${b.x}, ${b.y})" else null
         return SvgElem(name = "text", attrs = attrs, children = listOf(text))
     }
 }

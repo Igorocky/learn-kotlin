@@ -1,8 +1,10 @@
 package org.igye
 
 import org.igye.graph2d.*
+import org.igye.graph2d.Graph2DUtils.EX
 import org.igye.svg.Color
 import org.igye.svg.SvgElem
+import org.igye.svg.SvgElems
 import org.igye.svg.SvgUtils
 import org.igye.svg.SvgUtils.circle
 import org.igye.svg.SvgUtils.line
@@ -13,7 +15,8 @@ import java.math.RoundingMode
 
 fun main() {
 //    testAngles()
-    testSizes()
+//    testSizes()
+    testProj()
 }
 
 fun testSizes() {
@@ -50,6 +53,50 @@ fun testSizes() {
     )
 }
 
+fun testProj() {
+    val arrowSize = 10.0
+    val lineWidth = 1.0
+
+    fun doTest(ex:Vector2D, dir: Vector2D): SvgElems {
+        val vec = (ex*50).rotate(40.deg())
+        val proj = vec.proj(dir)
+        return Arrow(base = dir, color = Color.black, arrowSize = arrowSize, lineWidth = lineWidth).toSvg() +
+                    Arrow(base = vec, color = Color.red, arrowSize = arrowSize, lineWidth = lineWidth).toSvg() +
+                    Arrow(base = proj, color = Color.green, arrowSize = arrowSize, lineWidth = lineWidth).toSvg()
+    }
+
+    var ex = EX
+    var dir = (EX*30).translate(0.0, 50.0)
+    val start = dir.begin
+    val start2 = ex.begin
+    var data = doTest(ex, dir)
+    val dx = 70.0
+
+    for (i in 1..8) {
+        dir = dir.rotate(35.deg()).translate(dx, 0.0)
+        ex = ex.translate(dx, 0.0)
+        data = data + doTest(ex,dir)
+    }
+
+    val stop = dir.begin
+    val stop2 = ex.begin
+
+
+    val imgDir = File("C:\\igye\\temp")
+    val imgName = "img-1"
+    SvgUtils.writePngFile(
+        elems = listOf(
+            line(vector = start..stop, color = Color.lightgrey, strokeWidth = lineWidth),
+            line(vector = start2..stop2, color = Color.lightgrey, strokeWidth = lineWidth),
+        ).plus(data.elems),
+        boundaries = data.boundaries.addAbsoluteMargin(50),
+        width = 1000,
+        height = 800,
+        svgFile = File(imgDir, imgName + ".svg"),
+        pngFile = File(imgDir, imgName + ".png")
+    )
+}
+
 fun testAngles() {
     fun ang(vec: Vector2D): String = BigDecimal(vec.deg().doubleValue).setScale(1, RoundingMode.HALF_UP).toString()
 
@@ -79,8 +126,6 @@ fun testAngles() {
         elems.add(line(vector = vec, strokeWidth = strokeWidth))
         elems.add(text(begin = vec.end, text = ang(vec)))
     }
-
-
 
     val imgDir = File("C:\\igye\\temp")
     val imgName = "img-1"

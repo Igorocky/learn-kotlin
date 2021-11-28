@@ -17,4 +17,6 @@ data class SvgElems(val boundaries: Boundaries2D, val elems: List<SvgElem>) {
             elems = es
         )
     }
+
+    operator fun plus(other: SvgElems) = merge(other)
 }
