@@ -12,12 +12,13 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 fun main() {
-    testAngles()
+//    testAngles()
+    testSizes()
 }
 
 fun testSizes() {
     val a = Point(3.0, 4.0)
-    val b = Point(15.0, 20.0)
+    val b = Point(15.0, -20.0)
 //    val vector = Vector2D(begin = Point(0.0, 0.0), end = Point(5.0, 0.0))
 //    val line = SvgUtils.line(vector = vector, strokeWidth = 0.1)
 
@@ -30,7 +31,7 @@ fun testSizes() {
     ).toSvg()
 
 
-    val boundaries = Boundaries2D.fromPoints(a,b)
+    val boundaries = Boundaries2D.from(a,b)
         .merge(dist.boundaries)
         .addAbsoluteMargin(5)
 
@@ -54,7 +55,7 @@ fun testAngles() {
 
     val elems = ArrayList<SvgElem>()
     var vec = Point(10.0, 20.0)..Point(100.0, 20.0)
-    var boundary = Boundaries2D.fromPoints(vec.begin, vec.end)
+    var boundary = Boundaries2D.from(vec.begin, vec.end)
     val strokeWidth = 1.0
 
     elems.add(line(vector = vec, strokeWidth = strokeWidth))

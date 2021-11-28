@@ -13,7 +13,7 @@ data class SvgElems(val boundaries: Boundaries2D, val elems: List<SvgElem>) {
             es.addAll(o.elems)
         }
         return SvgElems(
-            boundaries = Boundaries2D.merge(bs),
+            boundaries = Boundaries2D.from(bs),
             elems = es
         )
     }

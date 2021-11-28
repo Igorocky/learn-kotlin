@@ -8,18 +8,30 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 data class DistBetweenPoints(
-    val base: Vector2D, val color: Color, val baseDist: Double, val arrowSize: Double, val lineWidth: Double,
+    val base: Vector2D, val color: Color, val baseDist: Double = 0.0, val arrowSize: Double, val lineWidth: Double,
     val fontSize: Double = arrowSize*1.5
 ) {
     fun toSvg(): SvgElems {
+        val boundaryBegin: Vector2D = base.normalize().rotate(-90.deg()).times(baseDist)
+        val boundaryEnd: Vector2D = base.swapEnds().normalize().rotate(90.deg()).times(baseDist)
+        return SvgElems(
+            boundaries = Boundaries2D.from(boundaryBegin, boundaryEnd),
+            elems = listOf(
+                line(vector = boundaryBegin, color = color, strokeWidth = lineWidth),
+                line(vector = boundaryEnd, color = color, strokeWidth = lineWidth),
+            )
+        ).merge(arrowsAndSize(base = boundaryBegin.end..boundaryEnd.end))
+    }
+
+    fun arrowsAndSize(base: Vector2D): SvgElems {
         val beginArrowHeight = (base.normalize()*arrowSize).swapEnds()
         val endArrowHeight = beginArrowHeight.swapEnds().endAt(base.end)
         val beginArrow = triangle(beginArrowHeight)
         val endArrow = triangle(endArrowHeight)
 
-        val textBegin: Point = beginArrowHeight.begin + endArrowHeight
+        val textBegin: Point = (beginArrowHeight.rotate(-90.deg()).normalize()*beginArrowHeight.length/3).end + endArrowHeight
         return SvgElems(
-            boundaries = Boundaries2D.fromPoints(base.begin, base.end),
+            boundaries = Boundaries2D.from(base.begin, base.end),
             elems = listOf(
                 line(begin = beginArrowHeight.begin, end = endArrowHeight.begin, color = color, strokeWidth = lineWidth),
                 SvgUtils.text(
@@ -27,7 +39,7 @@ data class DistBetweenPoints(
                     text = BigDecimal(base.length).setScale(1, RoundingMode.HALF_UP).toString(),
                     color = color,
                     style = "font-size: $fontSize",
-                    transform = "rotate(45, ${textBegin.x}, ${textBegin.y})"
+                    transform = "rotate(${-base.deg()}, ${textBegin.x}, ${textBegin.y})"
                 )
             )
         )
@@ -40,7 +52,7 @@ data class DistBetweenPoints(
         val b = (height.normalize().rotate(90.deg())*halfWidth).end
         val c = (height.normalize().rotate(-90.deg())*halfWidth).end
         return SvgElems(
-            boundaries = Boundaries2D.fromPoints(a,b,c),
+            boundaries = Boundaries2D.from(a,b,c),
             elems = listOf(
                 SvgUtils.polygon(
                     points = listOf(a,b,c),

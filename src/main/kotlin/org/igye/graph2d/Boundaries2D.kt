@@ -25,7 +25,7 @@ data class Boundaries2D(val minX: Double, val maxX: Double, val minY: Double, va
         allPoints.add(Point(minX, minY))
         allPoints.add(Point(maxX, maxY))
         allPoints.addAll(points)
-        return fromPoints(listOf(
+        return fromList(listOf(
             Point(minX, minY),
             Point(maxX, maxY),
             *points
@@ -41,56 +41,99 @@ data class Boundaries2D(val minX: Double, val maxX: Double, val minY: Double, va
 
     fun addAbsoluteMargin(m: Long): Boundaries2D = addAbsoluteMargin(m.toDouble())
 
-    fun merge(other: Boundaries2D): Boundaries2D = Boundaries2D(
-        minX = min(minX, other.minX),
-        maxX = max(maxX, other.maxX),
-        minY = min(minY, other.minY),
-        maxY = max(maxY, other.maxY)
-    )
+    fun merge(vararg others: Any): Boundaries2D {
+        if (others[0] is Collection<*>) {
+            return mergeList(others[0] as Collection<*>)
+        } else {
+            return mergeList(others.toList())
+        }
+    }
+
+    private fun mergeList(others: Collection<*>): Boundaries2D {
+        val other = fromList(others)
+        return Boundaries2D(
+            minX = min(minX, other.minX),
+            maxX = max(maxX, other.maxX),
+            minY = min(minY, other.minY),
+            maxY = max(maxY, other.maxY)
+        )
+    }
 
     companion object {
-        fun fromPoints(points: Collection<Point>): Boundaries2D {
-            if (points.isEmpty()) {
-                throw Graph2DException("points.isEmpty()")
+        fun from(vararg objs: Any): Boundaries2D {
+            if (objs[0] is Collection<*>) {
+                return fromList(objs[0] as Collection<*>)
+            } else {
+                return fromList(objs.toList())
             }
-            val iterator = points.iterator()
-            var point = iterator.next()
-            var minX = point.x
-            var maxX = point.x
-            var minY = point.y
-            var maxY = point.y
+        }
+
+        private fun fromList(objs: Collection<*>): Boundaries2D {
+            if (objs.isEmpty()) {
+                throw Graph2DException()
+            }
+            val iterator = objs.iterator()
+            var obj = iterator.next()
+            var minX = getMinX(obj!!)
+            var maxX = getMaxX(obj!!)
+            var minY = getMinY(obj!!)
+            var maxY = getMaxY(obj!!)
             while (iterator.hasNext()) {
-                point = iterator.next()
-                minX = min(minX, point.x)
-                maxX = max(maxX, point.x)
-                minY = min(minY, point.y)
-                maxY = max(maxY, point.y)
+                obj = iterator.next()
+                minX = min(minX, getMinX(obj!!))
+                maxX = max(maxX, getMaxX(obj!!))
+                minY = min(minY, getMinY(obj!!))
+                maxY = max(maxY, getMaxY(obj!!))
             }
             return Boundaries2D(maxX = maxX, minX = minX, maxY = maxY, minY = minY)
         }
 
-        fun fromPoints(vararg points: Point): Boundaries2D {
-            return fromPoints(points.toList())
+        private fun getMinX(a: Any): Double {
+            if (a is Point) {
+                return a.x
+            } else if (a is Vector2D) {
+                return min(a.begin.x, a.end.x)
+            } else if (a is Boundaries2D) {
+                return a.minX
+            } else {
+                throw Graph2DException()
+            }
         }
 
-        fun merge(boundaries: List<Boundaries2D>): Boundaries2D {
-            if (boundaries.isEmpty()) {
-                throw Graph2DException("boundaries.isEmpty()")
+        private fun getMinY(a: Any): Double {
+            if (a is Point) {
+                return a.y
+            } else if (a is Vector2D) {
+                return min(a.begin.y, a.end.y)
+            } else if (a is Boundaries2D) {
+                return a.minY
+            } else {
+                throw Graph2DException()
             }
-            val iterator = boundaries.iterator()
-            var b = iterator.next()
-            var minX = b.minX
-            var maxX = b.maxX
-            var minY = b.minY
-            var maxY = b.maxY
-            while (iterator.hasNext()) {
-                b = iterator.next()
-                minX = min(minX, b.minX)
-                maxX = max(maxX, b.maxX)
-                minY = min(minY, b.minY)
-                maxY = max(maxY, b.maxY)
+        }
+
+        private fun getMaxX(a: Any): Double {
+            if (a is Point) {
+                return a.x
+            } else if (a is Vector2D) {
+                return max(a.begin.x, a.end.x)
+            } else if (a is Boundaries2D) {
+                return a.maxX
+            } else {
+                throw Graph2DException()
             }
-            return Boundaries2D(maxX = maxX, minX = minX, maxY = maxY, minY = minY)
+        }
+
+        private fun getMaxY(a: Any): Double {
+            if (a is Point) {
+                return a.y
+            } else if (a is Vector2D) {
+                return max(a.begin.y, a.end.y)
+            } else if (a is Boundaries2D) {
+                return a.maxY
+            } else {
+                throw Graph2DException()
+            }
         }
     }
 }
