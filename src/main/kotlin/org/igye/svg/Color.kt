@@ -8,5 +8,7 @@ value class Color(val strValue: String) {
         val green = Color("green")
         val blue = Color("blue")
         val lightgrey = Color("lightgrey")
+        val grey = Color("grey")
+        val orange = Color("orange")
     }
 }

@@ -9,7 +9,7 @@ import java.math.RoundingMode
 
 data class DistBetweenPoints(
     val base: Vector2D, val color: Color, val baseDist: Double = 0.0, val arrowSize: Double, val lineWidth: Double,
-    val fontSize: Double = arrowSize*1.5
+    val fontSize: Double = arrowSize*1.5, val external: Boolean = false, val textShift: Double = arrowSize*2
 ) {
     fun toSvg(): SvgElems {
         val boundaryBegin: Vector2D = base.normalize().rotate(-90.deg()).times(baseDist)
@@ -24,12 +24,22 @@ data class DistBetweenPoints(
     }
 
     fun arrowsAndSize(base: Vector2D): SvgElems {
-        val beginArrowHeight = (base.normalize()*arrowSize).swapEnds()
-        val endArrowHeight = beginArrowHeight.swapEnds().endAt(base.end)
+        var beginArrowHeight = (base.normalize()*arrowSize).swapEnds()
+        var endArrowHeight = beginArrowHeight.swapEnds().endAt(base.end)
+        if (external) {
+            beginArrowHeight = beginArrowHeight.rotate(180.deg()).translate(beginArrowHeight*2)
+            endArrowHeight = endArrowHeight.rotate(180.deg()).translate(endArrowHeight*2)
+        }
+
         val beginArrow = triangle(beginArrowHeight)
         val endArrow = triangle(endArrowHeight)
 
-        val textBegin: Point = (beginArrowHeight.rotate(-90.deg()).normalize()*beginArrowHeight.length/3).end + endArrowHeight
+        val textBegin: Point = if (!external) {
+                beginArrowHeight.end.translate(beginArrowHeight, -textShift) + (beginArrowHeight.rotate(-90.deg()).normalize()*beginArrowHeight.length/3)
+        } else {
+            endArrowHeight.end.translate(endArrowHeight, -textShift) + (endArrowHeight.rotate(-90.deg()).normalize()*endArrowHeight.length/3)
+//            (endArrowHeight.rotate(-90.deg()).normalize()*endArrowHeight.length/3).end + beginArrowHeight
+        }
         return SvgElems(
             boundaries = Boundaries2D.from(base.begin, base.end),
             elems = listOf(
@@ -40,7 +50,13 @@ data class DistBetweenPoints(
                     color = color,
                     style = "font-size: $fontSize",
                     transform = "rotate(${-base.deg()}, ${textBegin.x}, ${textBegin.y})"
-                )
+                ),
+                line(
+                    begin = beginArrowHeight.begin,
+                    end = if (external) (beginArrowHeight.begin..textBegin).proj(beginArrowHeight).end else beginArrowHeight.begin,
+                    color = color,
+                    strokeWidth = lineWidth
+                ),
             )
         )
             .merge(beginArrow, endArrow)

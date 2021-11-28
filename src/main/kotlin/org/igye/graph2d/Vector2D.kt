@@ -27,6 +27,7 @@ data class Vector2D(val begin: Point, val end: Point) {
     fun endAt(p:Point): Vector2D = swapEnds().beginAt(p).swapEnds()
     fun deg(): Deg = rad().toDeg()
     fun translate(shift: Vector2D) = Vector2D(begin = begin+shift, end = end+shift)
+    fun translate(dir: Vector2D, dist: Double) = translate(dir.normalize()*dist)
     fun translate(dx: Double, dy: Double) = Vector2D(begin = Point(begin.x+dx, begin.y+dy), end = Point(end.x+dx, end.y+dy))
     fun proj(dir:Vector2D): Vector2D {
         val newLen = (this*dir)/dir.length

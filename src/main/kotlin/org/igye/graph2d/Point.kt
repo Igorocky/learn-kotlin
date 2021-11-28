@@ -17,6 +17,7 @@ data class Point(val x: Double, val y: Double) {
     operator fun div(factor: Double): Point = Point(x/factor, y/factor)
     operator fun div(factor: Int): Point = Point(x/factor, y/factor)
     operator fun rangeTo(p:Point): Vector2D = Vector2D(this, p)
+    fun translate(dir: Vector2D, dist: Double) = this+dir.normalize()*dist
     fun rotate(deg:Deg): Point {
         val angle = -deg.toRad().doubleValue
         return Point(
