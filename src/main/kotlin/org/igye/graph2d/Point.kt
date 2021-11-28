@@ -18,7 +18,7 @@ data class Point(val x: Double, val y: Double) {
     operator fun div(factor: Int): Point = Point(x/factor, y/factor)
     operator fun rangeTo(p:Point): Vector2D = Vector2D(this, p)
     fun rotate(deg:Deg): Point {
-        val angle = deg.toRad().doubleValue
+        val angle = -deg.toRad().doubleValue
         return Point(
             x * cos(angle) - y * sin(angle),
             x * sin(angle) + y * cos(angle)

@@ -6,7 +6,7 @@ import org.w3c.dom.Element
 data class SvgElem(
     val name:String,
     val attrs: Map<SvgAttr,Any>,
-    val children: List<SvgElem> = emptyList()
+    val children: List<Any> = emptyList()
 ) {
     fun toXmlElem(document: Document): Element {
         val elem = document.createElement(name)
@@ -17,7 +17,15 @@ data class SvgElem(
                 elem.setAttributeNode(xmlAttr)
             }
         }
-        children.forEach { elem.appendChild(it.toXmlElem(document)) }
+        for (child in children) {
+            if (child is SvgElem) {
+                elem.appendChild(child.toXmlElem(document))
+            } else if (child is String) {
+                elem.textContent = child
+            } else {
+                throw SvgException()
+            }
+        }
         return elem
     }
 }

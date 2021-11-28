@@ -115,4 +115,25 @@ object SvgUtils {
         attrs[SvgAttr.FILL] = color?.strValue
         return SvgElem(name = "circle", attrs = attrs)
     }
+
+    fun text(
+        begin: Point? = null,
+        x: Double? = null,
+        y: Double? = null,
+        text: String,
+        stroke: Color? = null,
+        color: Color? = Color.black,
+        style: String? = null,
+        transform: String? = null,
+    ):SvgElem {
+        val b = begin ?: Point(x!!,y!!)
+        val attrs: EnumMap<SvgAttr, Any> = EnumMap(SvgAttr::class.java)
+        attrs[SvgAttr.X] = b.x.toString()
+        attrs[SvgAttr.Y] = b.y.toString()
+        attrs[SvgAttr.STROKE] = stroke?.strValue
+        attrs[SvgAttr.FILL] = color?.strValue
+        attrs[SvgAttr.STYLE] = style
+        attrs[SvgAttr.TRANSFORM] = transform
+        return SvgElem(name = "text", attrs = attrs, children = listOf(text))
+    }
 }

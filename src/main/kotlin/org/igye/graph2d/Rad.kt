@@ -6,4 +6,7 @@ import java.lang.Math.PI
 value class Rad(val doubleValue: Double) {
     fun toDeg(): Deg = Deg(doubleValue/ PI * 180.0)
     operator fun unaryMinus(): Rad = Rad(-doubleValue)
+    override fun toString(): String {
+        return doubleValue.toString()
+    }
 }
