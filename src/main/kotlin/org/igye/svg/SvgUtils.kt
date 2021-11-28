@@ -4,6 +4,7 @@ import org.apache.batik.transcoder.TranscoderInput
 import org.apache.batik.transcoder.TranscoderOutput
 import org.apache.batik.transcoder.image.PNGTranscoder
 import org.igye.graph2d.Boundaries2D
+import org.igye.graph2d.Point
 import org.igye.graph2d.Vector2D
 import java.io.File
 import java.io.FileOutputStream
@@ -64,21 +65,54 @@ object SvgUtils {
     }
 
     fun line(
-        vector2D: Vector2D? = null,
-        stroke: Color? = null,
+        vector: Vector2D? = null,
+        begin: Point? = null,
+        end: Point? = null,
+        color: Color? = Color.black,
         strokeWidth: Any? = null,
     ):SvgElem {
-        val x1 = vector2D!!.begin.x
-        val x2 = vector2D.end.x
-        val y1 = vector2D!!.begin.y
-        val y2 = vector2D!!.end.y
+        val vec = vector ?: Vector2D(begin = begin!!, end = end!!)
         val attrs: EnumMap<SvgAttr, Any> = EnumMap(SvgAttr::class.java)
-        attrs[SvgAttr.X1] = x1
-        attrs[SvgAttr.X2] = x2
-        attrs[SvgAttr.Y1] = y1
-        attrs[SvgAttr.Y2] = y2
-        attrs[SvgAttr.STROKE] = stroke?.strValue
+        attrs[SvgAttr.X1] = vec.begin.x
+        attrs[SvgAttr.X2] = vec.end.x
+        attrs[SvgAttr.Y1] = vec.begin.y
+        attrs[SvgAttr.Y2] = vec.end.y
+        attrs[SvgAttr.STROKE] = color?.strValue
         attrs[SvgAttr.STROKE_WIDTH] = strokeWidth
         return SvgElem(name = "line", attrs = attrs)
+    }
+
+    fun polygon(
+        points: List<Point>,
+        stroke: Color? = null,
+        strokeWidth: Any? = null,
+        color: Color? = Color.black,
+    ):SvgElem {
+        val attrs: EnumMap<SvgAttr, Any> = EnumMap(SvgAttr::class.java)
+        attrs[SvgAttr.POINTS] = points.asSequence().map { "${it.x},${it.y}" }.joinToString(" ")
+        attrs[SvgAttr.STROKE] = stroke?.strValue
+        attrs[SvgAttr.STROKE_WIDTH] = strokeWidth
+        attrs[SvgAttr.FILL] = color?.strValue
+        return SvgElem(name = "polygon", attrs = attrs)
+    }
+
+    fun circle(
+        center: Point? = null,
+        cx: Double? = null,
+        cy: Double? = null,
+        radius: Double,
+        stroke: Color? = null,
+        strokeWidth: Any? = null,
+        color: Color? = Color.black,
+    ):SvgElem {
+        val c = center ?: Point(cx!!,cy!!)
+        val attrs: EnumMap<SvgAttr, Any> = EnumMap(SvgAttr::class.java)
+        attrs[SvgAttr.CX] = c.x.toString()
+        attrs[SvgAttr.CY] = c.y.toString()
+        attrs[SvgAttr.R] = radius.toString()
+        attrs[SvgAttr.STROKE] = stroke?.strValue
+        attrs[SvgAttr.STROKE_WIDTH] = strokeWidth
+        attrs[SvgAttr.FILL] = color?.strValue
+        return SvgElem(name = "circle", attrs = attrs)
     }
 }

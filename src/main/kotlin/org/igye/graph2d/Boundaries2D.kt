@@ -41,6 +41,13 @@ data class Boundaries2D(val minX: Double, val maxX: Double, val minY: Double, va
 
     fun addAbsoluteMargin(m: Long): Boundaries2D = addAbsoluteMargin(m.toDouble())
 
+    fun merge(other: Boundaries2D): Boundaries2D = Boundaries2D(
+        minX = min(minX, other.minX),
+        maxX = max(maxX, other.maxX),
+        minY = min(minY, other.minY),
+        maxY = max(maxY, other.maxY)
+    )
+
     companion object {
         fun fromPoints(points: Collection<Point>): Boundaries2D {
             if (points.isEmpty()) {
@@ -64,6 +71,26 @@ data class Boundaries2D(val minX: Double, val maxX: Double, val minY: Double, va
 
         fun fromPoints(vararg points: Point): Boundaries2D {
             return fromPoints(points.toList())
+        }
+
+        fun merge(boundaries: List<Boundaries2D>): Boundaries2D {
+            if (boundaries.isEmpty()) {
+                throw Graph2DException("boundaries.isEmpty()")
+            }
+            val iterator = boundaries.iterator()
+            var b = iterator.next()
+            var minX = b.minX
+            var maxX = b.maxX
+            var minY = b.minY
+            var maxY = b.maxY
+            while (iterator.hasNext()) {
+                b = iterator.next()
+                minX = min(minX, b.minX)
+                maxX = max(maxX, b.maxX)
+                minY = min(minY, b.minY)
+                maxY = max(maxY, b.maxY)
+            }
+            return Boundaries2D(maxX = maxX, minX = minX, maxY = maxY, minY = minY)
         }
     }
 }

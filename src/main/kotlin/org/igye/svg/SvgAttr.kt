@@ -5,8 +5,13 @@ enum class SvgAttr(val attrName: String) {
     X2("x2"),
     Y1("y1"),
     Y2("y2"),
+    CX("cx"),
+    CY("cy"),
+    R("r"),
+    POINTS("points"),
     STROKE("stroke"),
     STROKE_WIDTH("stroke-width"),
+    FILL("fill"),
 
     XMLNS("xmlns"),
     WIDTH("width"),
