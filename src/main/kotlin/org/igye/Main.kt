@@ -25,32 +25,32 @@ fun testSizes() {
 //    val vector = Vector2D(begin = Point(0.0, 0.0), end = Point(5.0, 0.0))
 //    val line = SvgUtils.line(vector = vector, strokeWidth = 0.1)
 
-    val dist = DistBetweenPoints(
-        base = a..b,
-        color = Color.green,
-        baseDist = 3.0,
-        arrowSize = 1.0,
-        lineWidth = 0.1
-    ).toSvg()
-
-
-    val boundaries = Boundaries2D.from(a,b)
-        .merge(dist.boundaries)
-        .addAbsoluteMargin(5)
-
-    val imgDir = File("C:\\igye\\temp")
-    val imgName = "img-1"
-    SvgUtils.writePngFile(
-        elems = listOf(
-            circle(center = a, radius = 1.0, color = Color.red),
-            circle(center = b, radius = 1.0, color = Color.red),
-        ).plus(dist.elems),
-        boundaries = boundaries,
-        width = 300,
-        height = 300,
-        svgFile = File(imgDir, imgName + ".svg"),
-        pngFile = File(imgDir, imgName + ".png")
-    )
+//    val dist = DistBetweenPoints(
+//        base = a..b,
+//        color = Color.green,
+//        baseDist = 3.0,
+//        arrowSize = 1.0,
+//        lineWidth = 0.1
+//    ).toSvg()
+//
+//
+//    val boundaries = Boundaries2D.from(a,b)
+//        .merge(dist.boundaries)
+//        .addAbsoluteMargin(5)
+//
+//    val imgDir = File("C:\\igye\\temp")
+//    val imgName = "img-1"
+//    SvgUtils.writePngFile(
+//        elems = listOf(
+//            circle(center = a, radius = 1.0, color = Color.red),
+//            circle(center = b, radius = 1.0, color = Color.red),
+//        ).plus(dist.elems),
+//        boundaries = boundaries,
+//        width = 300,
+//        height = 300,
+//        svgFile = File(imgDir, imgName + ".svg"),
+//        pngFile = File(imgDir, imgName + ".png")
+//    )
 }
 
 fun testProj() {

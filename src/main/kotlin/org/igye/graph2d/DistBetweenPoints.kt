@@ -8,15 +8,30 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 data class DistBetweenPoints(
-    val base: Vector2D, val color: Color, val baseDist: Double = 0.0, val arrowSize: Double, val lineWidth: Double,
-    val fontSize: Double = arrowSize*1.5, val external: Boolean = false, val textShift: Double = arrowSize*2,
-    val renderBoundaries: Boolean = true
+    val base: Vector2D, val color: Color, val baseDist: Double = 0.0,
+    val arrowSize: Double, val lineWidth: Double, val fontSize: Double, val external: Boolean = false,
+    val textHorShift: Double = arrowSize, val textVerShift: Double = arrowSize/2,
+    val renderBorders: Boolean = true, val onlyLeftBorder: Boolean = false, val onlyRightBorder: Boolean = false,
 ) {
     fun toSvg(): SvgElems {
         val boundaryBegin: Vector2D = base.normalize().rotate(-90.deg()).times(baseDist)
         val boundaryEnd: Vector2D = base.swapEnds().normalize().rotate(90.deg()).times(baseDist)
         var result = arrowsAndSize(base = boundaryBegin.end..boundaryEnd.end)
-        if (renderBoundaries) {
+        if (onlyLeftBorder) {
+            result = result + SvgElems(
+                boundaries = Boundaries2D.from(boundaryBegin),
+                elems = listOf(
+                    line(vector = boundaryBegin, color = color, strokeWidth = lineWidth),
+                )
+            )
+        } else if (onlyLeftBorder) {
+            result = result + SvgElems(
+                boundaries = Boundaries2D.from(boundaryEnd),
+                elems = listOf(
+                    line(vector = boundaryEnd, color = color, strokeWidth = lineWidth),
+                )
+            )
+        } else if (renderBorders) {
             result = result + SvgElems(
                 boundaries = Boundaries2D.from(boundaryBegin, boundaryEnd),
                 elems = listOf(
@@ -36,14 +51,11 @@ data class DistBetweenPoints(
             endArrowHeight = endArrowHeight.rotate(180.deg()).translate(endArrowHeight*2)
         }
 
-        val beginArrow = triangle(beginArrowHeight)
-        val endArrow = triangle(endArrowHeight)
-
         val textBegin: Point = if (!external) {
-                beginArrowHeight.end.translate(beginArrowHeight, -textShift) + (beginArrowHeight.rotate(-90.deg()).normalize()*beginArrowHeight.length/3)
+            beginArrowHeight.begin.translate(endArrowHeight, textHorShift).translate(beginArrowHeight.rotate(-90.deg()), textVerShift)
         } else {
-            endArrowHeight.end.translate(endArrowHeight, -textShift) + (endArrowHeight.rotate(-90.deg()).normalize()*endArrowHeight.length/3)
-//            (endArrowHeight.rotate(-90.deg()).normalize()*endArrowHeight.length/3).end + beginArrowHeight
+            endArrowHeight.begin.translate(beginArrowHeight, textHorShift).translate(endArrowHeight.rotate(-90.deg()), textVerShift)
+//            endArrowHeight.end.translate(endArrowHeight, -textHorShift) + (endArrowHeight.rotate(-90.deg()).normalize()*endArrowHeight.length/3)
         }
         return SvgElems(
             boundaries = Boundaries2D.from(base.begin, base.end),
@@ -64,7 +76,10 @@ data class DistBetweenPoints(
                 ),
             )
         )
-            .merge(beginArrow, endArrow)
+            .merge(
+                triangle(beginArrowHeight),
+                triangle(endArrowHeight)
+            )
     }
 
     private fun triangle(height: Vector2D): SvgElems {
