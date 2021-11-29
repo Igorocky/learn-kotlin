@@ -24,9 +24,9 @@ fun size(
 open class Box(
     val ex: Vector2D, val width: Double, val depth: Double, val text: String,
     val arrowSize: Double, val lineWidth: Double, val fontSize: Double,
-    val textHorShift: Int = 5, val textVerShift: Int = 2,
-    val widthSizeDist: Int = 10, val invertWidthSize: Boolean = false,
-    val depthSizeDist: Int = (arrowSize+1).toInt(), val invertDepthSize: Boolean = false,
+    val textHorShift: Int = 5, val textVerShift: Int = 4,
+    val widthSizeDist: Int = 10, val widthSizeTextHorShift: Int = 5, val widthSizeTextVerShift: Int = 1, val widthSizeInvert: Boolean = false,
+    val depthSizeDist: Int = (arrowSize+1).toInt(), val depthSizeTextHorShift: Int = 1, val depthSizeTextVerShift: Int = 1, val depthSizeInvert: Boolean = false,
 ) {
     val bottom = ex*width
     val ey = ex.rotate(90.deg())
@@ -34,14 +34,14 @@ open class Box(
     val corners = listOf(bottom.begin, top.begin, top.end, bottom.end)
 
     open fun toSvg(): SvgElems {
-        val widthSize = size(base = if (invertWidthSize) top.swapEnds() else top, baseDist = widthSizeDist,
+        val widthSize = size(base = if (widthSizeInvert) top.swapEnds() else top, baseDist = widthSizeDist * (if (widthSizeInvert) -1 else 1),
             renderBorders = false, arrowSize=arrowSize, lineWidth=lineWidth, fontSize=fontSize,
-            textHorShift = 1.0, textVerShift = 1.0,
+            textHorShift = widthSizeTextHorShift.toDouble(), textVerShift = widthSizeTextVerShift.toDouble(),
         )
         val vert = bottom.end..top.end
-        val depthSize = size(base = if (invertDepthSize) vert.swapEnds() else vert, baseDist = -depthSizeDist,
+        val depthSize = size(base = if (depthSizeInvert) vert.swapEnds() else vert, baseDist = -depthSizeDist * (if (depthSizeInvert) -1 else 1),
             renderBorders = false, arrowSize=arrowSize, lineWidth=lineWidth, fontSize=fontSize,
-            textHorShift = 1.0, textVerShift = 1.0,
+            textHorShift = depthSizeTextHorShift.toDouble(), textVerShift = depthSizeTextVerShift.toDouble(),
         )
         return SvgElems(
             elems = listOf(

@@ -24,7 +24,7 @@ data class DistBetweenPoints(
                     line(vector = boundaryBegin, color = color, strokeWidth = lineWidth),
                 )
             )
-        } else if (onlyLeftBorder) {
+        } else if (onlyRightBorder) {
             result = result + SvgElems(
                 boundaries = Boundaries2D.from(boundaryEnd),
                 elems = listOf(
